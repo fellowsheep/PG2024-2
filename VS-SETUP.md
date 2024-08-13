@@ -18,5 +18,7 @@ Se você quiser ou precisar alterar as dependências, você deve ir em Projeto -
 3) Incluir os nomes das bibliotecas estáticas:
 ![image](https://user-images.githubusercontent.com/2465857/128772961-04745bc6-ef1d-45b3-9aa7-a623d2af3065.png)
 
-Ao rodar o programa Hello3D, você deverá obter este resultado:
+Ao rodar o programa HelloTriangle, você deverá obter este resultado:
+![image](https://github.com/user-attachments/assets/2026a613-1382-4348-bf1a-93b9e24fc152)
+
 
