@@ -10,5 +10,5 @@ Se o seu ambiente de desenvolvimento for diferente, você deve baixar:
 
 Para configurar os projetos em sua máquina utilizando o VSCode ou o Visual Studio (pode ser o Community), vá para os links:
 
-- [Visual Studio Code]()
-- [Visual Studio]()
+- [Visual Studio Code](https://github.com/fellowsheep/PG2024-2/blob/main/VSCode-SETUP.md)
+- [Visual Studio](https://github.com/fellowsheep/PG2024-2/blob/main/VS-SETUP.md)
