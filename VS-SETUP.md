@@ -17,12 +17,12 @@ No caso do projeto HelloTriangle, que precisa da GLFW e da GLAD, colocaríamos o
 
 3) Diretório com os arquivos de biblioteca estática pré-compilados (.lib ou .a):
 ![image](https://github.com/user-attachments/assets/1518cb32-2d2a-4692-833b-c991ea9a6d90)
-No projeto HelloTriangle, apenas a GLFW possui biblioteca estática, a glfw3.lib. Ao baixar ela para Windows 64 bits, haverá um diretório 'lib-vc2022'. entre outras opções (pode inclusive apagar os diretórios para plataformas que você não pretende usar). Use o caminho relativo para este diretório:
+No projeto HelloTriangle, apenas a GLFW possui biblioteca estática, a `glfw3.lib`. Ao baixar ela para Windows 64 bits, haverá um diretório `lib-vc2022`. entre outras opções (pode inclusive apagar os diretórios para plataformas que você não pretende usar). Use o caminho relativo para este diretório:
 * ..\Dependencies\glfw-3.4.bin.WIN64\lib-vc2022
 
-5) Incluir os nomes das bibliotecas estáticas, em Vinculador > Entrada > Dependências Adicionais (não apague as já existentes!):
+5) Incluir os nomes das bibliotecas estáticas, em `Vinculador > Entrada > Dependências Adicionais` (não apague as já existentes!):
 ![image](https://github.com/user-attachments/assets/0693e37d-0209-4fbe-bd91-f5a200a128db)
-Neste caso, temos apenas a 'glfw3.lib' (precisa escrever). Se houver mais de uma, escreva uma por linha nesta janela que abre ao clicar Editar:
+Neste caso, temos apenas a `glfw3.lib` (precisa escrever). Se houver mais de uma, escreva uma por linha nesta janela que abre ao clicar Editar:
 ![image](https://github.com/user-attachments/assets/a6b85b55-cd85-40d5-b49c-1c7b0d2596b4)
 
 Ao rodar o programa HelloTriangle, você deverá obter este resultado:
