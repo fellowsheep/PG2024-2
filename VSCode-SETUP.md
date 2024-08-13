@@ -130,6 +130,6 @@ Para o Visual Studio Code ainda encontrar os locais dos cabeçalhos das bibliote
 }
 ```
 
-A execução correta do projeto Hello3D deve resultar na seguinte janela: 
+A execução correta do projeto HelloTriangle deve resultar na seguinte janela: 
 ![image](https://github.com/user-attachments/assets/7d96677b-e695-489f-a66a-b4982ba2ce86)
 
