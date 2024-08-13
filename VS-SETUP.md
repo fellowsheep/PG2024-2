@@ -23,6 +23,7 @@ No projeto HelloTriangle, apenas a GLFW possui biblioteca estática, a `glfw3.li
 5) Incluir os nomes das bibliotecas estáticas, em `Vinculador > Entrada > Dependências Adicionais` (não apague as já existentes!):
 ![image](https://github.com/user-attachments/assets/0693e37d-0209-4fbe-bd91-f5a200a128db)
 Neste caso, temos apenas a `glfw3.lib` (precisa escrever). Se houver mais de uma, escreva uma por linha nesta janela que abre ao clicar Editar:
+
 ![image](https://github.com/user-attachments/assets/a6b85b55-cd85-40d5-b49c-1c7b0d2596b4)
 
 Ao rodar o programa HelloTriangle, você deverá obter este resultado:
