@@ -10,13 +10,22 @@ Uma coisa muito importante, ao configurar um projeto no VS, é escolher para qua
 Se você quiser ou precisar alterar as dependências, você deve ir em Projeto -> Propriedades e alterar estes 3 lugares:
 
 1) Diretório com os arquivos de cabeçalho (onde ficam os .h da biblioteca): 
-![image](https://user-images.githubusercontent.com/2465857/128772404-13b3a1a4-fc71-4a93-9de1-1eb9cba05969.png)
+![image](https://github.com/user-attachments/assets/14b699ca-90f9-4e7e-9471-238627878011)
+No caso do projeto HelloTriangle, que precisa da GLFW e da GLAD, colocaríamos os diretórios (usando caminho relativo):
+* ..\Dependencies\glfw-3.4.bin.WIN64\include
+* ..\Dependencies\GLAD\include
 
-2) Diretório com os arquivos de biblioteca estática pré-compilados (.lib ou .a):
-![image](https://user-images.githubusercontent.com/2465857/128772735-d04bec8e-edcd-485f-a103-e66f1810cdad.png)
+3) Diretório com os arquivos de biblioteca estática pré-compilados (.lib ou .a):
+![image](https://github.com/user-attachments/assets/1518cb32-2d2a-4692-833b-c991ea9a6d90)
+No projeto HelloTriangle, apenas a GLFW possui biblioteca estática, a glfw3.lib. Ao baixar ela para Windows 64 bits, haverá um diretório 'lib-vc2022'. entre outras opções (pode inclusive apagar os diretórios para plataformas que você não pretende usar). Use o caminho relativo para este diretório:
+* ..\Dependencies\glfw-3.4.bin.WIN64\lib-vc2022
 
-3) Incluir os nomes das bibliotecas estáticas:
-![image](https://user-images.githubusercontent.com/2465857/128772961-04745bc6-ef1d-45b3-9aa7-a623d2af3065.png)
+5) Incluir os nomes das bibliotecas estáticas, em Vinculador > Entrada > Dependências Adicionais (não apague as já existentes!):
+![image](https://github.com/user-attachments/assets/0693e37d-0209-4fbe-bd91-f5a200a128db)
+Neste caso, temos apenas a 'glfw3.lib' (precisa escrever). Se houver mais de uma, escreva uma por linha nesta janela que abre:
+![image](https://github.com/user-attachments/assets/c9b69a48-98cc-42a0-91d1-8adbd2c0df5d)
+
+
 
 Ao rodar o programa HelloTriangle, você deverá obter este resultado:
 ![image](https://github.com/user-attachments/assets/2026a613-1382-4348-bf1a-93b9e24fc152)
