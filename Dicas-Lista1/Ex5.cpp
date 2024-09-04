@@ -126,7 +126,16 @@ int main()
 
 		// Chamada de desenho - drawcall
 		// Poligono Preenchido - GL_TRIANGLES
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		// Poligono contorno - GL_LINE_LOOP
+		// Poligono vértices - GL_POINTS
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+		glUniform4f(colorLoc, 1.0f, 1.0f, 0.0f, 1.0f);
+		glDrawArrays(GL_LINE_LOOP, 0, 3);
+		glDrawArrays(GL_LINE_LOOP, 3, 3);
+
+		glUniform4f(colorLoc, 0.0f, 1.0f, 1.0f, 1.0f);
+		glDrawArrays(GL_POINTS, 0, 6);
 
 		glBindVertexArray(0); //Desconectando o buffer de geometria
 
@@ -211,10 +220,13 @@ int setupGeometry()
 	GLfloat vertices[] = {
 		//x   y     z
 		//T0
-		-0.5, -0.5, 0.0, //v0
-		 0.5, -0.5, 0.0, //v1
- 		 0.0,  0.5, 0.0, //v2
+		-0.5,  0.5, 0.0, //v0
+		-0.5, -0.5, 0.0, //v1
+		 0.0,  0.0, 0.0, //v2
 		//T1
+		 0.0,  0.0, 0.0, //v3
+		 0.5, -0.5, 0.0, //v4
+		 0.5,  0.5, 0.0  //v5
 			  
 	};
 

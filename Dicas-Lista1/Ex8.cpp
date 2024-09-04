@@ -33,19 +33,22 @@ const GLuint WIDTH = 800, HEIGHT = 600;
 // Código fonte do Vertex Shader (em GLSL): ainda hardcoded
 const GLchar* vertexShaderSource = "#version 400\n"
 "layout (location = 0) in vec3 position;\n"
+"layout (location = 1) in vec3 color;\n"
+"out vec3 vertexColor;\n"
 "void main()\n"
 "{\n"
 //...pode ter mais linhas de código aqui!
 "gl_Position = vec4(position.x, position.y, position.z, 1.0);\n"
+"vertexColor = color;\n"
 "}\0";
 
 //Códifo fonte do Fragment Shader (em GLSL): ainda hardcoded
 const GLchar* fragmentShaderSource = "#version 400\n"
-"uniform vec4 inputColor;\n"
+"in vec3 vertexColor;\n"
 "out vec4 color;\n"
 "void main()\n"
 "{\n"
-"color = inputColor;\n"
+"color = vec4(vertexColor,1.0);\n"
 "}\n\0";
 
 // Função MAIN
@@ -98,15 +101,8 @@ int main()
 	// Gerando um buffer simples, com a geometria de um triângulo
 	GLuint VAO = setupGeometry();
 	
-
-	// Enviando a cor desejada (vec4) para o fragment shader
-	// Utilizamos a variáveis do tipo uniform em GLSL para armazenar esse tipo de info
-	// que não está nos buffers
-	GLint colorLoc = glGetUniformLocation(shaderID, "inputColor");
-	
 	glUseProgram(shaderID);
 	
-
 	// Loop da aplicação - "game loop"
 	while (!glfwWindowShouldClose(window))
 	{
@@ -122,11 +118,16 @@ int main()
 
 		glBindVertexArray(VAO); //Conectando ao buffer de geometria
 
-		glUniform4f(colorLoc, 1.0f, 0.0f, 1.0f, 1.0f); //enviando cor para variável uniform inputColor
-
 		// Chamada de desenho - drawcall
 		// Poligono Preenchido - GL_TRIANGLES
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		// Poligono contorno - GL_LINE_LOOP
+		// Poligono vértices - GL_POINTS
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+		glDrawArrays(GL_LINE_LOOP, 0, 3);
+		glDrawArrays(GL_LINE_LOOP, 3, 3);
+
+		glDrawArrays(GL_POINTS, 0, 6);
 
 		glBindVertexArray(0); //Desconectando o buffer de geometria
 
@@ -209,12 +210,15 @@ int setupGeometry()
 	// Cada atributo do vértice (coordenada, cores, coordenadas de textura, normal, etc)
 	// Pode ser arazenado em um VBO único ou em VBOs separados
 	GLfloat vertices[] = {
-		//x   y     z
+		//x   y     z	r	 g	   b
 		//T0
-		-0.5, -0.5, 0.0, //v0
-		 0.5, -0.5, 0.0, //v1
- 		 0.0,  0.5, 0.0, //v2
+		-0.5,  0.5, 0.0, 1.0, 0.0, 0.0, //v0
+		-0.5, -0.5, 0.0, 0.0, 1.0, 0.0, //v1
+		 0.0,  0.0, 0.0, 0.0, 0.0, 1.0,  //v2
 		//T1
+		 0.0,  0.0, 0.0, 1.0, 1.0, 0.0, //v3
+		 0.5, -0.5, 0.0, 0.0, 1.0, 1.0, //v4
+		 0.5,  0.5, 0.0, 1.0, 0.0, 1.0  //v5
 			  
 	};
 
@@ -238,8 +242,14 @@ int setupGeometry()
 	// Se está normalizado (entre zero e um)
 	// Tamanho em bytes 
 	// Deslocamento a partir do byte zero 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+
+	//Atributo posicao
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
+
+	//Atributo cor
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*) (3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
 
 	// Observe que isso é permitido, a chamada para glVertexAttribPointer registrou o VBO como o objeto de buffer de vértice 
 	// atualmente vinculado - para que depois possamos desvincular com segurança
