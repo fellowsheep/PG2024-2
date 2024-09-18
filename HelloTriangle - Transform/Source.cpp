@@ -40,10 +40,11 @@ const GLuint WIDTH = 800, HEIGHT = 600;
 const GLchar* vertexShaderSource = "#version 400\n"
 "layout (location = 0) in vec3 position;\n"
 "uniform mat4 projection;\n"
+"uniform mat4 model;\n"
 "void main()\n"
 "{\n"
 //...pode ter mais linhas de código aqui!
-"gl_Position = projection * vec4(position.x, position.y, position.z, 1.0);\n"
+"gl_Position = projection * model * vec4(position.x, position.y, position.z, 1.0);\n"
 "}\0";
 
 //Códifo fonte do Fragment Shader (em GLSL): ainda hardcoded
@@ -112,11 +113,25 @@ int main()
 	// que não está nos buffers
 	GLint colorLoc = glGetUniformLocation(shaderID, "inputColor");
 
-	//Exercicio 2
-	//mat4 projection = ortho(-10.0f,10.0f,-10.0f,10.0f,-1.0f,1.0f);
-	mat4 projection = ortho(0.0f,800.0f,600.0f,0.0f,-1.0f,1.0f);
+	// Matriz de projeção ortográfica
+	mat4 projection = ortho(0.0f,800.0f,0.0f,600.0f,-1.0f,1.0f);
 
 	glUniformMatrix4fv(glGetUniformLocation(shaderID, "projection"), 1, GL_FALSE, value_ptr(projection));
+
+	//Matriz de modelo - Tranformações na geometria, nos objetos
+	mat4 model = mat4(1); //matriz identidade
+	//Translação
+	model = translate(model,vec3(400.0, 300.0, 0.0));
+	//Rotação
+	model = rotate (model,radians(45.0f), vec3(0.0,0.0,1.0));
+	
+	//Escala
+	model = scale(model,vec3(300.0, 300.0, 1.0));
+
+	//Enviar para o shader
+	glUniformMatrix4fv(glGetUniformLocation(shaderID, "model"), 1, GL_FALSE, value_ptr(model));
+
+
 
 	
 	// Loop da aplicação - "game loop"
@@ -135,6 +150,22 @@ int main()
 		glBindVertexArray(VAO); //Conectando ao buffer de geometria
 
 		glUniform4f(colorLoc, 1.0f, 0.0f, 1.0f, 1.0f); //enviando cor para variável uniform inputColor
+
+		float angulo = glfwGetTime();
+		/////
+		//Matriz de modelo - Tranformações na geometria, nos objetos
+		mat4 model = mat4(1); //matriz identidade
+		//Translação
+		model = translate(model,vec3(400.0, 300.0, 0.0));
+		//Rotação
+		model = rotate (model,radians(angulo*5.0f), vec3(0.0,0.0,1.0));
+		//Escala
+		model = scale(model,vec3(300.0, 300.0, 1.0));
+		//Enviar para o shader
+		glUniformMatrix4fv(glGetUniformLocation(shaderID, "model"), 1, GL_FALSE, value_ptr(model));
+
+
+
 
 		// Chamada de desenho - drawcall
 		// Poligono Preenchido - GL_TRIANGLES
@@ -223,9 +254,9 @@ int setupGeometry()
 	GLfloat vertices[] = {
 		//x   y     z
 		//T0
-		-0.5 * 300 + 400, -0.5 * 300 + 300, 0.0, //v0
-		 0.5 * 300 + 400, -0.5 * 300 + 300, 0.0, //v1
- 		 0.0 * 300 + 400,  0.5 * 300 + 300, 0.0, //v2
+		-0.5, -0.5, 0.0, //v0
+		 0.5, -0.5, 0.0, //v1
+ 		 0.0,  0.5, 0.0, //v2
 		//T1
 			  
 	};
