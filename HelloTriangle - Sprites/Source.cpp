@@ -29,6 +29,16 @@ using namespace std;
 
 using namespace glm;
 
+struct Sprite 
+{
+	GLuint VAO;
+	GLuint texID;
+	vec3 position;
+	vec3 dimensions;
+	float angle;
+};
+
+
 // Protótipo da função de callback de teclado
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
@@ -36,6 +46,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 int setupShader();
 int setupGeometry();
 int loadTexture(string filePath, int &imgWidth, int &imgHeight);
+void drawSprite(Sprite spr, GLuint shaderID);
 
 // Dimensões da janela (pode ser alterado em tempo de execução)
 const GLuint WIDTH = 800, HEIGHT = 600;
@@ -51,7 +62,7 @@ const GLchar* vertexShaderSource = "#version 400\n"
 "{\n"
 //...pode ter mais linhas de código aqui!
 "gl_Position = projection * model * vec4(position.x, position.y, position.z, 1.0);\n"
-"texCoord = texc;\n"
+"texCoord = vec2(texc.s, 1.0 - texc.t);\n"
 "}\0";
 
 //Códifo fonte do Fragment Shader (em GLSL): ainda hardcoded
@@ -63,6 +74,12 @@ const GLchar* fragmentShaderSource = "#version 400\n"
 "{\n"
 "color = texture(texBuffer, texCoord);\n"
 "}\n\0";
+
+enum directions { NONE, LEFT, RIGHT};
+int dir = NONE;
+float vel = 2.0;
+
+
 
 // Função MAIN
 int main()
@@ -84,7 +101,7 @@ int main()
 //#endif
 
 	// Criação da janela GLFW
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Ola Triangulo! -- Rossana", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Hello Sprites!", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
 	// Fazendo o registro da função de callback para a janela GLFW
@@ -111,13 +128,23 @@ int main()
 	// Compilando e buildando o programa de shader
 	GLuint shaderID = setupShader();
 
+	//Sprite do fundo da cena
+	Sprite background, character;
 	// Gerando um buffer simples, com a geometria de um triângulo
-	GLuint VAO = setupGeometry();
-
+	background.VAO = setupGeometry();
 	//Carregando uma textura (recebendo seu ID)
 	int imgWidth, imgHeight;
-	GLuint texID = loadTexture("../Texturas/Tiles.jpg",imgWidth,imgHeight);
-	
+	background.texID = loadTexture("../Texturas/backgrounds/PNG/Battleground3/Bright/Battleground3.png",imgWidth,imgHeight);
+	background.dimensions.x = imgWidth * 0.5;
+	background.dimensions.y = imgHeight * 0.5;
+	background.dimensions.z = 1.0;
+	background.position = vec3(400.0, 300.0, 0.0);
+
+	character.VAO = setupGeometry();
+	character.texID = loadTexture("../Texturas/characters/PNG/1 Pink_Monster/Pink_Monster.png",imgWidth,imgHeight);
+	character.dimensions = vec3(imgWidth*2.0, imgHeight*2.0, 1.0);
+	character.position = vec3(50.0, 200.0, 0.0);
+
 	glUseProgram(shaderID);
 
 	// Enviando a cor desejada (vec4) para o fragment shader
@@ -131,23 +158,17 @@ int main()
 
 	glUniformMatrix4fv(glGetUniformLocation(shaderID, "projection"), 1, GL_FALSE, value_ptr(projection));
 
-	//Matriz de modelo - Tranformações na geometria, nos objetos
-	mat4 model = mat4(1); //matriz identidade
-	//Translação
-	model = translate(model,vec3(400.0, 300.0, 0.0));
-	//Rotação
-	model = rotate (model,radians(45.0f), vec3(0.0,0.0,1.0));
-	
-	//Escala
-	model = scale(model,vec3(300.0, 300.0, 1.0));
-
-	//Enviar para o shader
-	glUniformMatrix4fv(glGetUniformLocation(shaderID, "model"), 1, GL_FALSE, value_ptr(model));
-
 	//Ativando o primeiro buffer de textura da OpenGL
 	glActiveTexture(GL_TEXTURE0);
 
-	
+	//Habilitar a transparência
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	//Habilitar o teste de profundidade
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_ALWAYS);
+
 	// Loop da aplicação - "game loop"
 	while (!glfwWindowShouldClose(window))
 	{
@@ -156,43 +177,18 @@ int main()
 
 		// Limpa o buffer de cor
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f); //cor de fundo
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glLineWidth(10);
-		glPointSize(20);
-
-		glBindVertexArray(VAO); //Conectando ao buffer de geometria
-
-		glBindTexture(GL_TEXTURE_2D, texID); //conectando o buffer de textura
-
-
-		float angulo = glfwGetTime();
-		/////
-		//Matriz de modelo - Tranformações na geometria, nos objetos
-		mat4 model = mat4(1); //matriz identidade
-		//Translação
-		model = translate(model,vec3(400.0, 300.0, 0.0));
-		//Rotação
-		model = rotate (model,radians(angulo*5.0f), vec3(0.0,0.0,1.0));
-		//Escala
-		model = scale(model,vec3(300.0, 300.0, 1.0));
-		//Enviar para o shader
-		glUniformMatrix4fv(glGetUniformLocation(shaderID, "model"), 1, GL_FALSE, value_ptr(model));
-
-
-
-
-		// Chamada de desenho - drawcall
-		// Poligono Preenchido - GL_TRIANGLES
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-
-		glBindVertexArray(0); //Desconectando o buffer de geometria
+		drawSprite(background,shaderID);
+		if (dir == LEFT) character.position.x -= vel;
+		if (dir == RIGHT) character.position.x += vel;
+		drawSprite(character,shaderID);
 
 		// Troca os buffers da tela
 		glfwSwapBuffers(window);
 	}
 	// Pede pra OpenGL desalocar os buffers
-	glDeleteVertexArrays(1, &VAO);
+	//glDeleteVertexArrays(1, background.VAO);
 	// Finaliza a execução da GLFW, limpando os recursos alocados por ela
 	glfwTerminate();
 	return 0;
@@ -205,6 +201,20 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
+
+	if (key == GLFW_KEY_A || key == GLFW_KEY_LEFT)
+	{
+		dir = LEFT;
+	}
+	else if (key == GLFW_KEY_D || key == GLFW_KEY_RIGHT)
+	{
+		dir = RIGHT;
+	}
+
+	if (action == GLFW_RELEASE)
+	{
+		dir = NONE;
+	}
 }
 
 //Esta função está basntante hardcoded - objetivo é compilar e "buildar" um programa de
@@ -269,9 +279,10 @@ int setupGeometry()
 	GLfloat vertices[] = {
 		//x   y     z    s     t
 		//T0
-		-0.5, -0.5, 0.0, 0.0, 0.0, //v0
-		 0.5, -0.5, 0.0, 1.0, 0.0, //v1
- 		 0.0,  0.5, 0.0, 0.5, 1.0  //v2
+		-0.5, -0.5, 0.0, 0.0, 0.0,//V0
+		-0.5,  0.5, 0.0, 0.0, 1.0,//V1
+		 0.5, -0.5, 0.0, 1.0, 0.0,//V2
+		 0.5,  0.5, 0.0, 1.0, 1.0  //V3
 			  
 	};
 
@@ -352,5 +363,30 @@ int loadTexture(string filePath, int &imgWidth, int &imgHeight)
 	}
 	
 	return texID;
+}
+
+void drawSprite(Sprite spr, GLuint shaderID)
+{
+	glBindVertexArray(spr.VAO); //Conectando ao buffer de geometria
+
+	glBindTexture(GL_TEXTURE_2D, spr.texID); //conectando o buffer de textura
+
+	//Matriz de modelo - Tranformações na geometria, nos objetos
+	mat4 model = mat4(1); //matriz identidade
+	//Translação
+	model = translate(model,spr.position);
+	//Rotação
+	model = rotate (model,radians(spr.angle), vec3(0.0,0.0,1.0));
+	//Escala
+	model = scale(model,spr.dimensions);
+	//Enviar para o shader
+	glUniformMatrix4fv(glGetUniformLocation(shaderID, "model"), 1, GL_FALSE, value_ptr(model));
+
+	// Chamada de desenho - drawcall
+	// Poligono Preenchido - GL_TRIANGLES
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+	glBindVertexArray(0); //Desconectando o buffer de geometria
+
 }
 
