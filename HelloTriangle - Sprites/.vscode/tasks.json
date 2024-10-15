@@ -7,6 +7,7 @@
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
+                "-Wno-pragmas", // Ignora warnings relacionados a pragmas
                 // Aqui você inclui os caminhos para os diretórios que contém os cabeçalhos (.h) das funções
                 "-I${workspaceFolder}/../Dependencies/GLAD/include", //GLAD
                 "-I${workspaceFolder}/../Dependencies/glfw-3.4.bin.WIN64/include", //GLFW
