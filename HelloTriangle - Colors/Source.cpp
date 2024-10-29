@@ -62,6 +62,8 @@ const GLchar* fragmentShaderSource = "#version 400\n"
 "void main()\n"
 "{\n"
 "color = texture(texBuffer, texCoord);\n"
+"float media = (color.r + color.g + color.b)/3.0;\n"
+"color = vec4(media, media, media, 1.0);\n"
 "}\n\0";
 
 // Função MAIN
@@ -116,7 +118,7 @@ int main()
 
 	//Carregando uma textura (recebendo seu ID)
 	int imgWidth, imgHeight;
-	GLuint texID = loadTexture("../Texturas/Tiles.jpg",imgWidth,imgHeight);
+	GLuint texID = loadTexture("../Texturas/pixelWall.png",imgWidth,imgHeight);
 	
 	glUseProgram(shaderID);
 
@@ -334,13 +336,14 @@ int loadTexture(string filePath, int &imgWidth, int &imgHeight)
 	int nrChannels;
 	unsigned char *data = stbi_load(filePath.c_str(), &imgWidth, &imgHeight, &nrChannels, 0);
 
-	int size = imgWidth * imgHeight * nrChannels;
-	for (int i=0; i < size; i+=nrChannels)
-	{
-		data[i] = rand() % 256; //canal vermelho
-		data[i+1] = rand() % 256; //canal verde
-		data[i+2] = rand() % 256; //canal azul
-	}
+	//int size = imgWidth * imgHeight * nrChannels;
+	//for (int i=0; i < size; i+=nrChannels)
+	//{
+	//	float media = (data[i] + data[i+1] + data[i+2])/3.0;
+	//	data[i] = media; //rand() % 256; //canal vermelho
+	//		data[i+1] = media; //rand() % 256; //canal verde
+	//	data[i+2] = media; //rand() % 256; //canal azul
+	//}
 
 	if (data)
 	{
