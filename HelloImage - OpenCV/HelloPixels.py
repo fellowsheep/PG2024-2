@@ -10,13 +10,13 @@ print("Atributos da imagem",img.shape,"\n")
 for i in range(img.shape[0]): #percorre linhas
 	for j in range(img.shape[1]): #percorre colunas
 		media = (img.item(i,j,0) + img.item(i,j,1) + img.item(i,j,2))/3.0
-		imgResult.__setitem__((i,j,0),media) # canal B!!!!!!!!!!!!!!!!
-		imgResult.__setitem__((i,j,1),media) # canal G
-		imgResult.__setitem__((i,j,2),media) # canal R!!!!
+		imgResult[i, j, 0] = media  # Canal B
+		imgResult[i, j, 1] = media  # Canal G
+		imgResult[i, j, 2] = media  # Canal R
 		media = img.item(i,j,0) * 0.07 + img.item(i,j,1) * 0.71 + img.item(i,j,2) *0.21
-		imgResult2.__setitem__((i,j,0),media) # canal B!!!!!!!!!!!!!!!!
-		imgResult2.__setitem__((i,j,1),media) # canal G
-		imgResult2.__setitem__((i,j,2),media) # canal R!!!!
+		imgResult2[i, j, 0] = media  # Canal B
+		imgResult2[i, j, 1] = media  # Canal G
+		imgResult2[i, j, 2] = media  # Canal R
 
 cv.imshow("Imagem Original", img)
 cv.imshow("Imagem Grayscale",imgResult)

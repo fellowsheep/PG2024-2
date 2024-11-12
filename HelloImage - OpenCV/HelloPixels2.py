@@ -14,8 +14,8 @@ R, G, B = cv.split(img)
 
 imgTest = cv.cvtColor(img, cv.COLOR_BGR2HSV)
 H, S, V = cv.split(imgTest)
-S = S + 15
-S = np.clip(S,0,255)
+scale = 1.2
+S = np.clip(S * scale, 0, 255).astype(np.uint8)  # Convertendo para uint8
 imgTest = cv.merge([H, S, V])
 imgTest = cv.cvtColor(imgTest, cv.COLOR_HSV2BGR)
 
