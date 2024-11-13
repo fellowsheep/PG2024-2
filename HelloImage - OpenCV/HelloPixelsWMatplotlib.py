@@ -1,6 +1,8 @@
 import numpy as np
 import cv2 as cv
+# Matpoltlib: se você nãi tiver: pip install matplotlib
 import matplotlib.pyplot as plt
+
 
 # Carregar a imagem
 img = cv.imread('baboon.png')
@@ -45,3 +47,6 @@ plt.title("Grayscale (Ponderado)")
 plt.axis("off")
 
 plt.show()
+plt.close(img_rgb)
+plt.close(imgResult_rgb)
+plt.close(imgResult2_rgb)

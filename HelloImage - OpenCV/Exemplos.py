@@ -4,6 +4,7 @@ import cv2 as cv
 img = cv.imread('baboon.png') #original
 
 kernel = np.ones((3, 3), np.float32) / 2
+print(kernel)
 
 correlated_image = cv.filter2D(img, -1, kernel)
 
@@ -36,8 +37,9 @@ filtro_minimo = cv.erode(img, kernel)
 
 print(kernel)
 
-cv.imshow("Filtro de Máximo", filtro_maximo)
-cv.imshow("Filtro de Mínimo", filtro_minimo)
+cv.imshow("Filtro correlação",correlated_image)
+#cv.imshow("Filtro de Máximo", filtro_maximo)
+#cv.imshow("Filtro de Mínimo", filtro_minimo)
 
 
 
